@@ -340,10 +340,33 @@
                 text-align: center; 
                 margin-bottom: 40px;
             }
-            .hero-cards-container { height: auto; display: flex; flex-direction: column; gap: 20px; align-items: center; padding-bottom: 40px; max-width: 100%; }
-            .hero-card { position: static; transform: none !important; width: 100%; max-width: 350px; }
+            .hero-cards-container { 
+                height: auto; 
+                display: flex; 
+                flex-direction: row; 
+                gap: 16px; 
+                align-items: flex-start; 
+                padding-bottom: 40px; 
+                max-width: 100%;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                padding-left: 4px;
+                padding-right: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .hero-card { 
+                position: static; 
+                transform: none !important; 
+                width: 280px; 
+                min-width: 280px; 
+                max-width: 85vw; 
+                flex: 0 0 auto;
+                scroll-snap-align: center;
+            }
             
             /* Feature Section Mobile Adjustments */
+            .feature-content { padding: 0 12px; }
             .features { padding: 60px 0; }
             .feature-block { gap: 32px; margin-bottom: 80px; }
             .feature-visual { padding: 0; min-height: auto; width: 100%; }
@@ -476,7 +499,7 @@
         <div class="container">
             <nav>
                 <div class="logo">
-                    <img src="logo.svg" alt="咖记咔叽">
+                    <img src="image/logo.svg" alt="咖记咔叽">
                 </div>
                 <div class="menu-toggle" onclick="toggleMenu()">
                     <div class="bar"></div>
