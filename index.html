@@ -1,0 +1,817 @@
+    <title>Coffee - 记录每一次风味探索</title>
+    <style>
+        :root {
+            --color-primary: #49672E;
+            --color-primary-rgb: 73, 103, 46;
+            --color-secondary: #779B57;
+            --color-bg: #FBF9F3;
+            --color-bg-alt: #dae7c8;
+            --color-surface: #FFFFFF;
+            --color-text: #2C3E28;
+            --color-text-light: #666;
+            --color-border: rgba(73, 103, 46, 0.1);
+            
+            --font-serif: "Playfair Display", "Songti SC", serif;
+            --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: "Azeret Mono", monospace;
+            
+            --shadow-sm: 0 2px 8px rgba(73, 103, 46, 0.08);
+            --shadow-md: 0 8px 24px rgba(73, 103, 46, 0.12);
+            --shadow-lg: 0 16px 48px rgba(73, 103, 46, 0.16);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Card Components Common Styles */
+        .app-card {
+            background: var(--color-surface);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--font-sans);
+            text-align: left; /* Ensure left alignment */
+        }
+
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            line-height: 1.4;
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--color-secondary);
+            font-family: var(--font-mono);
+            margin-top: 4px;
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: var(--font-mono);
+        }
+        
+        .tag-primary { background: rgba(73, 103, 46, 0.1); color: var(--color-primary); }
+        .tag-secondary { background: rgba(119, 155, 87, 0.1); color: var(--color-secondary); }
+        .tag-accent { background: rgba(255, 193, 7, 0.15); color: #B38F00; }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .data-label { color: var(--color-text-light); font-size: 0.85rem; }
+        .data-value { font-family: var(--font-mono); font-weight: 500; color: var(--color-primary); }
+
+        .separator { margin: 0 6px; color: #ccc; }
+
+        /* Specific Card Styles */
+        
+        /* Supply Card */
+        .supply-card .bean-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--color-text);
+        }
+
+        /* Brew Record Card */
+        .brew-params {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--color-border);
+        }
+        .param-item { text-align: center; }
+        .param-icon { font-size: 1.2rem; margin-bottom: 4px; display: block; }
+        .param-val { display: block; font-family: var(--font-mono); font-weight: 600; color: var(--color-primary); font-size: 0.9rem;}
+        .param-key { display: block; font-size: 0.7rem; color: var(--color-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Gear Card */
+        .gear-maintenance {
+            background: rgba(255, 248, 225, 0.6);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .maintenance-warning { color: #B38F00; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+        /* Blind Box Card */
+        .blind-box-card {
+            background: linear-gradient(135deg, #49672E 0%, #2C3E28 100%);
+            color: #fff;
+            border: none;
+        }
+        .blind-box-card .card-title { color: #fff; }
+        .blind-box-card .card-subtitle { color: rgba(255,255,255,0.7); }
+        .blind-box-content {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .blind-result-big {
+            font-size: 1.5rem;
+            font-family: var(--font-serif);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .blind-result-sub {
+            font-family: var(--font-mono);
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background: rgba(251, 249, 243, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(73, 103, 46, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-serif); /* Changed to serif for '咖记咖记' feel */
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--color-primary);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+                gap: 32px;
+            }
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-secondary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: left; /* Changed from center to left */
+            background: radial-gradient(circle at center, var(--color-bg-alt) 0%, var(--color-bg) 70%);
+            overflow: hidden; 
+        }
+
+        .hero-content-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 24px;
+            color: var(--color-primary);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+            margin-bottom: 64px;
+        }
+
+        .hero-cards-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Adjusted for side layout */
+            height: 500px;
+            perspective: 1000px;
+            flex: 1;
+        }
+
+        /* Floating Cards Position in Hero */
+        .hero-card {
+            position: absolute;
+            width: 280px; /* Slightly smaller to fit side layout */
+            transition: all 0.5s ease-out;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+        }
+        
+        .card-pos-1 { top: 100px; left: 50%; transform: translateX(-50%) rotate(0deg); z-index: 30; } /* Center */
+        .card-pos-2 { top: 40px; left: 10%; transform: rotate(-6deg); z-index: 20; } /* Left Top */
+        .card-pos-3 { top: 60px; right: 10%; transform: rotate(5deg); z-index: 20; } /* Right Top */
+        .card-pos-4 { top: 280px; left: 15%; transform: rotate(-3deg); z-index: 25; } /* Bottom Left */
+        .card-pos-5 { top: 250px; right: 15%; transform: rotate(4deg); z-index: 25; } /* Bottom Right */
+
+        @media (max-width: 900px) {
+            .hero-content-wrapper {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-text { 
+                text-align: center; 
+                margin-bottom: 40px;
+            }
+            .hero-cards-container { height: auto; display: flex; flex-direction: column; gap: 20px; align-items: center; padding-bottom: 40px; max-width: 100%; }
+            .hero-card { position: static; transform: none !important; width: 90%; max-width: 350px; }
+        }
+
+        /* Features Grid */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 80px;
+            color: var(--color-primary);
+        }
+
+        .feature-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+            align-items: center;
+            margin-bottom: 120px;
+        }
+
+        @media (min-width: 992px) {
+            .feature-block {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .feature-block.reverse {
+                direction: rtl;
+            }
+
+            .feature-block.reverse .feature-content {
+                direction: ltr;
+            }
+        }
+
+        .feature-content h3 {
+            font-size: 2rem;
+            margin-bottom: 24px;
+            color: var(--color-primary);
+        }
+
+        .feature-content p {
+            font-size: 1.1rem;
+            color: var(--color-text-light);
+            margin-bottom: 32px;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tag {
+            background: var(--color-bg-alt);
+            color: var(--color-primary);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+        }
+
+        .feature-visual {
+            background: transparent;
+            border-radius: 32px;
+            padding: 40px;
+            min-height: 400px;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            position: relative;
+            overflow: visible; /* Changed from hidden to visible to allow potential overflow if needed, though not critical */
+        }
+        
+        /* Decorative Background Elements - Removed as requested */
+        .feature-visual::before {
+            display: none;
+        }
+        
+        .feature-visual .app-card {
+            z-index: 1;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .blind-box {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .blind-box h2 { color: #fff; margin-bottom: 24px; font-size: 2.5rem; }
+        .blind-box p { color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto; font-size: 1.2rem; }
+
+        footer {
+            background: #2C3E28;
+            color: #FBF9F3;
+            padding: 80px 0 40px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        .copyright {
+            font-size: 0.8rem;
+            opacity: 0.5;
+            margin-top: 40px;
+        }
+    </style>
+    <!-- Importing fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;600&family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <img src="image/logo.svg" alt="咖记咔叽">
+                </div>
+                <div class="nav-links">
+                    <a href="#beans">补给管理</a>
+                    <a href="#brewing">冲煮记录</a>
+                    <a href="#gear">器具与方法</a>
+                    <a href="#cupping">杯测评估</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content-wrapper">
+            <div class="hero-text">
+                <h1>记录每一次<br>风味探索</h1>
+                <p>专业的咖啡管理助手，从豆子到杯测，为您珍藏每一滴香气。</p>
+            </div>
+            
+            <div class="hero-cards-container">
+                <!-- 1. Brew Record Card (Center) -->
+                <div class="app-card hero-card card-pos-1">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">V60 手冲</div>
+                            <div class="card-subtitle">2024-05-28 08:30</div>
+                        </div>
+                        <span class="card-tag tag-primary">Excellent</span>
+                    </div>
+                    <div style="font-size: 0.9rem; margin-bottom: 12px; color: #444;">
+                        <span style="color:var(--color-primary); font-weight:600;">Ethiopia Yirgacheffe</span> · Washed
+                    </div>
+                    <div class="brew-params">
+                        <div class="param-item">
+                            <span class="param-val">15g</span>
+                            <span class="param-key">粉重</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-val">225g</span>
+                            <span class="param-key">注水</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-val">02:30</span>
+                            <span class="param-key">时间</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Supply Card (Left) -->
+                <div class="app-card supply-card hero-card card-pos-2">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">花魁 7.0</div>
+                            <div class="card-subtitle">Hambela Wamena</div>
+                        </div>
+                        <span class="card-tag tag-secondary">剩 150g</span>
+                    </div>
+                    <div class="bean-meta">
+                        <span>浅中烘</span> <span class="separator">·</span>
+                        <span>日晒</span> <span class="separator">·</span>
+                        <span>2100m</span>
+                    </div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <span class="card-tag" style="background:#f0f0f0; color:#666;">莓果</span>
+                        <span class="card-tag" style="background:#f0f0f0; color:#666;">柑橘</span>
+                        <span class="card-tag" style="background:#f0f0f0; color:#666;">花香</span>
+                    </div>
+                </div>
+
+                <!-- 3. Gear Card (Right) -->
+                <div class="app-card gear-card hero-card card-pos-3">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Comandante C40</div>
+                            <div class="card-subtitle">手摇磨豆机</div>
+                        </div>
+                        <span class="card-tag tag-accent">需维护</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">当前刻度</span>
+                        <span class="data-value">24 clicks</span>
+                    </div>
+                    <div class="gear-maintenance">
+                        <span class="maintenance-warning">⚠️ 深度清洁</span>
+                        <span style="font-size:0.8rem; color:#666;">逾期 3 天</span>
+                    </div>
+                </div>
+
+                <!-- 4. Method Card (Bottom Left) -->
+                <div class="app-card method-card hero-card card-pos-4">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">四六法</div>
+                            <div class="card-subtitle">Tetsu Kasuya 4:6</div>
+                        </div>
+                        <span class="card-tag tag-primary">V60</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">
+                        通过前40%水量调节酸甜平衡，后60%调节醇厚度。
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">粉水比</span>
+                        <span class="data-value">1:15</span>
+                    </div>
+                </div>
+
+                <!-- 5. Blind Box Card (Bottom Right) -->
+                <div class="app-card blind-box-card hero-card card-pos-5">
+                    <div class="card-header">
+                        <div class="card-title" style="color:white;">今日盲盒</div>
+                        <span style="font-size:1.2rem;">🎁</span>
+                    </div>
+                    <div class="blind-box-content">
+                        <div class="blind-result-big">Aeropress</div>
+                        <div class="blind-result-sub">+ Kenya AA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container features">
+        <h2 class="section-title">核心功能</h2>
+
+        <!-- Feature 1: Bean Management & Smart OCR -->
+        <div class="feature-block" id="beans">
+            <div class="feature-content">
+                <h3>智能补给管理</h3>
+                <p>告别繁琐的手动输入。我们的智能识别功能支持剪贴板导入与图片OCR，瞬间解析咖啡豆的烘焙度、处理法、产地与豆种信息。建立您的私人咖啡豆数据库。</p>
+                <div class="feature-tags">
+                    <span class="tag">智能OCR解析</span>
+                    <span class="tag">产地溯源</span>
+                    <span class="tag">烘焙度追踪</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <!-- Realistic Supply Card Example -->
+                <div class="app-card supply-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">哥伦比亚 玫瑰谷</div>
+                            <div class="card-subtitle">Santander, Colombia</div>
+                        </div>
+                        <span class="card-tag tag-secondary">库存充足</span>
+                    </div>
+                    <div class="bean-meta">
+                        <span>双重厌氧水洗</span> <span class="separator">·</span>
+                        <span>中浅烘焙</span> <span class="separator">·</span>
+                        <span>1700m</span>
+                    </div>
+                    <div style="margin: 12px 0; font-size: 0.85rem; color: #555; line-height: 1.5;">
+                        <span style="font-family: var(--font-mono); color: var(--color-primary);">[描述]</span> 
+                        入口有明显的玫瑰花香，伴随着荔枝的甜感，尾韵带有水蜜桃的风味，层次丰富。
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px;">
+                        <span class="card-tag" style="background:#FFE4E1; color:#D87093;">玫瑰花</span>
+                        <span class="card-tag" style="background:#F0F8FF; color:#4682B4;">荔枝</span>
+                        <span class="card-tag" style="background:#FFFACD; color:#DAA520;">水蜜桃</span>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed #eee; display: flex; justify-content: space-between; font-size: 0.8rem; color: #999;">
+                        <span>烘焙日期: 2024-05-15</span>
+                        <span>养豆: 第 13 天</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2: Brewing & Methods -->
+        <div class="feature-block reverse" id="brewing">
+            <div class="feature-content">
+                <h3>专业冲煮指引</h3>
+                <p>内置V60、Kono、日式冰手冲等多种经典冲煮方案，像菜谱一样详尽。配合分步计时器与注水指引，让每一次萃取都精准可控。支持自定义您的专属冲煮流。</p>
+                <div class="feature-tags">
+                    <span class="tag">V60四六法</span>
+                    <span class="tag">三段式注水</span>
+                    <span class="tag">分步计时</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <!-- Realistic Method Card -->
+                <div class="app-card method-card" style="width: 100%; max-width: 360px;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">标准三段式</div>
+                            <div class="card-subtitle">Standard 3-Pour Method</div>
+                        </div>
+                        <span class="card-tag tag-primary">Handpour</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                        <div class="data-row" style="flex-direction: column; align-items: flex-start; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                            <span class="data-label">粉量</span>
+                            <span class="data-value">15g</span>
+                        </div>
+                        <div class="data-row" style="flex-direction: column; align-items: flex-start; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                            <span class="data-label">总注水</span>
+                            <span class="data-value">225g</span>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 0.9rem;">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <span style="width: 24px; height: 24px; background: var(--color-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-right: 12px;">1</span>
+                            <div>
+                                <div style="font-weight: 600; color: var(--color-text);">闷蒸</div>
+                                <div style="font-size: 0.8rem; color: #888;">30g 水 · 30s</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <span style="width: 24px; height: 24px; background: var(--color-bg-alt); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-right: 12px;">2</span>
+                            <div>
+                                <div style="font-weight: 600; color: var(--color-text);">第一段注水</div>
+                                <div style="font-size: 0.8rem; color: #888;">至 120g · 绕圈注水</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span style="width: 24px; height: 24px; background: var(--color-bg-alt); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-right: 12px;">3</span>
+                            <div>
+                                <div style="font-weight: 600; color: var(--color-text);">第二段注水</div>
+                                <div style="font-size: 0.8rem; color: #888;">至 225g · 中心注水</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 3: Equipment Management -->
+        <div class="feature-block" id="gear">
+            <div class="feature-content">
+                <h3>全能器具管家</h3>
+                <p>无论是手冲壶、磨豆机还是滤杯，统统收纳进您的数字装备库。系统还会贴心提醒您定期清洁与维护，确保设备始终处于最佳状态。</p>
+                <div class="feature-tags">
+                    <span class="tag">设备清单</span>
+                    <span class="tag">维护提醒</span>
+                    <span class="tag">磨豆机校准</span>
+                </div>
+            </div>
+            <div class="feature-visual" style="gap: 20px;">
+                <!-- Gear Card 1 -->
+                <div class="app-card gear-card" style="width: 100%;">
+                    <div class="card-header" style="margin-bottom: 8px;">
+                        <div>
+                            <div class="card-title">Timemore Black Mirror</div>
+                            <div class="card-subtitle">电子秤 · Basic Plus</div>
+                        </div>
+                        <span class="card-tag" style="background: #E8F5E8; color: var(--color-primary);">状态良好</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #999; margin-bottom: 12px;">Purchased: 2023-11-11</div>
+                    <div class="data-row" style="background: rgba(0,0,0,0.02); padding: 8px; border-radius: 6px;">
+                        <span class="data-label">电量检查</span>
+                        <span class="data-value" style="font-size: 0.8rem;">每 30 天</span>
+                    </div>
+                </div>
+                
+                <!-- Gear Card 2 -->
+                <div class="app-card gear-card" style="width: 100%;">
+                    <div class="card-header" style="margin-bottom: 8px;">
+                        <div>
+                            <div class="card-title">Fellow Ode Gen 2</div>
+                            <div class="card-subtitle">电动磨豆机</div>
+                        </div>
+                        <span class="card-tag tag-accent">需校准</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #999; margin-bottom: 12px;">Purchased: 2024-01-20</div>
+                    <div class="gear-maintenance" style="margin-top: 0;">
+                        <span class="maintenance-warning">⚠️ 刀盘归零校准</span>
+                        <span style="font-size:0.8rem; color:#666;">Today</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 4: Cupping -->
+        <div class="feature-block reverse" id="cupping">
+            <div class="feature-content">
+                <h3>SCA 标准杯测</h3>
+                <p>像专业寻豆师一样评估咖啡。遵循SCA（精品咖啡协会）标准，从干湿香气、风味、余韵、酸质、醇度等维度进行全方位打分与记录，生成您的专属风味雷达图。</p>
+                <div class="feature-tags">
+                    <span class="tag">SCA评分表</span>
+                    <span class="tag">风味轮</span>
+                    <span class="tag">感官训练</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="app-card" style="width: 100%; max-width: 380px;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">SCA Cupping Form</div>
+                            <div class="card-subtitle">Sample #1024</div>
+                        </div>
+                        <span class="card-tag tag-primary">Total: 87.5</span>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Attribute Row -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.9rem;">
+                                <span style="font-weight: 600;">Fragrance/Aroma</span>
+                                <span style="font-family: var(--font-mono); color: var(--color-primary);">8.50</span>
+                            </div>
+                            <div style="height: 6px; background: #eee; border-radius: 3px; overflow: hidden;">
+                                <div style="width: 85%; height: 100%; background: var(--color-primary);"></div>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 6px;">
+                                <span style="font-size: 0.75rem; background: #f5f5f5; padding: 2px 8px; border-radius: 4px;">Dry: Floral</span>
+                                <span style="font-size: 0.75rem; background: #f5f5f5; padding: 2px 8px; border-radius: 4px;">Break: Berry</span>
+                            </div>
+                        </div>
+
+                        <!-- Attribute Row -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.9rem;">
+                                <span style="font-weight: 600;">Flavor</span>
+                                <span style="font-family: var(--font-mono); color: var(--color-primary);">8.75</span>
+                            </div>
+                            <div style="height: 6px; background: #eee; border-radius: 3px; overflow: hidden;">
+                                <div style="width: 87.5%; height: 100%; background: var(--color-primary);"></div>
+                            </div>
+                        </div>
+
+                        <!-- Attribute Row -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.9rem;">
+                                <span style="font-weight: 600;">Acidity</span>
+                                <span style="font-family: var(--font-mono); color: var(--color-primary);">8.50</span>
+                            </div>
+                            <div style="height: 6px; background: #eee; border-radius: 3px; overflow: hidden;">
+                                <div style="width: 85%; height: 100%; background: var(--color-primary);"></div>
+                            </div>
+                             <div style="font-size: 0.75rem; color: #888; margin-top: 4px;">Bright, Citric</div>
+                        </div>
+
+                         <!-- Attribute Row -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.9rem;">
+                                <span style="font-weight: 600;">Body</span>
+                                <span style="font-family: var(--font-mono); color: var(--color-primary);">8.25</span>
+                            </div>
+                            <div style="height: 6px; background: #eee; border-radius: 3px; overflow: hidden;">
+                                <div style="width: 82.5%; height: 100%; background: var(--color-primary);"></div>
+                            </div>
+                             <div style="font-size: 0.75rem; color: #888; margin-top: 4px;">Medium, Smooth</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blind Box Section -->
+    <section class="blind-box">
+        <div class="container">
+            <h2>不知喝什么？</h2>
+            <p>首页内置趣味盲盒功能，摇一摇或点击，为您随机推荐今日的冲煮方案。更有隐藏彩蛋等待发现。</p>
+            
+            <div style="display: flex; justify-content: center; margin-top: 60px;">
+                <div class="app-card blind-box-card" style="width: 100%; max-width: 400px; transform: rotate(-2deg);">
+                    <div class="card-header">
+                        <div class="card-title" style="color:white;">盲盒挑战 · Round 3</div>
+                        <span style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">剩余 2 次</span>
+                    </div>
+                    <div class="blind-box-content" style="padding: 30px 0;">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">🎲</div>
+                        <div class="blind-result-big">Aeropress 倒置法</div>
+                        <div class="blind-result-sub" style="margin-bottom: 24px;">搭配: 瑰夏村 2023 竞标批次</div>
+                        
+                        <div style="display: inline-block; padding: 8px 20px; border: 1px solid rgba(255,255,255,0.3); border-radius: 100px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;">
+                            接受挑战
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <span class="footer-logo">咖记咔叽</span>
+            <p>记录 · 探索 · 享受</p>
+            <div class="copyright">
+                © 2024 咖记咔叽. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
