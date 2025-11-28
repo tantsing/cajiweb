@@ -209,8 +209,51 @@
             width: auto;
         }
 
-        .nav-links {
+        /* Mobile Menu */
+        .menu-toggle {
             display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .bar {
+            width: 24px;
+            height: 2px;
+            background-color: var(--color-primary);
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: var(--color-bg);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 40px;
+                transition: all 0.4s ease;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+                display: flex;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
         }
 
         @media (min-width: 768px) {
@@ -298,7 +341,13 @@
                 margin-bottom: 40px;
             }
             .hero-cards-container { height: auto; display: flex; flex-direction: column; gap: 20px; align-items: center; padding-bottom: 40px; max-width: 100%; }
-            .hero-card { position: static; transform: none !important; width: 90%; max-width: 350px; }
+            .hero-card { position: static; transform: none !important; width: 100%; max-width: 350px; }
+            
+            /* Feature Section Mobile Adjustments */
+            .features { padding: 60px 0; }
+            .feature-block { gap: 32px; margin-bottom: 80px; }
+            .feature-visual { padding: 0; min-height: auto; width: 100%; }
+            .feature-visual .app-card { max-width: 100% !important; width: 100% !important; }
         }
 
         /* Features Grid */
@@ -427,13 +476,18 @@
         <div class="container">
             <nav>
                 <div class="logo">
-                    <img src="logo.svg" alt="咖记咔叽">
+                    <img src="image/logo.svg" alt="咖记咔叽">
+                </div>
+                <div class="menu-toggle" onclick="toggleMenu()">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
                 </div>
                 <div class="nav-links">
-                    <a href="#beans">补给管理</a>
-                    <a href="#brewing">冲煮记录</a>
-                    <a href="#gear">器具与方法</a>
-                    <a href="#cupping">杯测评估</a>
+                    <a href="#beans" onclick="toggleMenu()">补给管理</a>
+                    <a href="#brewing" onclick="toggleMenu()">冲煮记录</a>
+                    <a href="#gear" onclick="toggleMenu()">器具与方法</a>
+                    <a href="#cupping" onclick="toggleMenu()">杯测评估</a>
                 </div>
             </nav>
         </div>
@@ -812,6 +866,13 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
